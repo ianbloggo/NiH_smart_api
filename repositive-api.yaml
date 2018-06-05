@@ -1,28 +1,24 @@
-openapi: "3.0.1"
+openapi: 3.0.1
 info:
   version: '0.1'
   title: Metadata Domain
-  termsOfService: https://repositive.io/about
+  termsOfService: 'https://repositive.io/about'
   contact:
     name: Repositive Ltd.
-    url: https://repositive.io
+    url: 'https://repositive.io'
     email: info@repositive.io
     x-role: responsible organisation
-    x-id: https://github.com/repositive/
-      #    - name: Data Commons Pilot Phase Consortium
-      #      url: https://github.com/dcppc
-      #      x-role: responsible organisation
-      #      x-id: https://github.com/dcppc
-      #    - name: Ian Broadhead
-      #      email: ian@repositive.io
-      #      x-role: responsible developer
+    x-id: 'https://github.com/repositive/'
   license:
-    name: Apache 2.0 # TODO: Check proper license to use
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: |
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+  description: >
     This is the definition of our metadata domain API</br>
-    This API uses an RPC approach, focusing on operation instead of resources. 
-    If you come from REST you will find useful the following table to compare equivalent operations:</br>
+
+    This API uses an RPC approach, focusing on operation instead of resources.
+    If you come from REST you will find useful the following table to compare
+    equivalent operations:</br>
+
 
     <table class="table table-bordered">
         <thead>
@@ -72,26 +68,28 @@ info:
       </table>
 
 
-    The API functions return the data as UTF-8 encoded JSON-LD, served using the application/json MIME type. The data consists of a single JSON object which includes JSON-LD context information (in the @context field) and one or more fields which contain the actual data.
+    The API functions return the data as UTF-8 encoded JSON-LD, served using the
+    application/json MIME type. The data consists of a single JSON object which
+    includes JSON-LD context information (in the @context field) and one or more
+    fields which contain the actual data.
 
-    We also use a domain design and the paths will follows the convention `/{domain}/{action}` in the case of this domain the convention dictates `/metadata/{action}`. For example:
+
+    We also use a domain design and the paths will follows the convention
+    `/{domain}/{action}` in the case of this domain the convention dictates
+    `/metadata/{action}`. For example:
+
     `/metadata/search`
 servers:
-  - url: https://api.data-commons-staging.repositive.io
+  - url: 'https://api.data-commons-staging.repositive.io'
     description: Staging search API for the NIH Data Commons pilot project
     x-maturity: staging
-  - url: https://api.data-commons.repositive.io
+  - url: 'https://api.data-commons.repositive.io'
     description: Search API for the NIH Data Commons pilot project
     x-maturity: production
-  - url: http://localhost:3000
+  - url: 'http://localhost:3000'
     description: Local development environment for the NIH Data Commons pilot project
     x-maturity: development
-    #externalDocs:
-    #  - description: The high-level user help docs for interacting with the API
-    #    url: https://nih.repositive.io/help # This is fictional
-    #    type: website
 paths:
-
   /metadata/search:
     get:
       description: Executes a search on the metadata
@@ -103,8 +101,9 @@ paths:
           schema:
             type: string
           required: true
-          description: |
-            A string that contains the intent of the user doing the search. The string follows a custom search DSL and has the following features:
+          description: >
+            A string that contains the intent of the user doing the search. The
+            string follows a custom search DSL and has the following features:
               - Full text search
                 e.g. (`white daisy in england`)
               - Exact match between quoted strings on non predicated tokens.
@@ -120,13 +119,14 @@ paths:
           schema:
             type: integer
           required: false
-          description: For pagination purposes, how many results to skip in the results as by default a limit is set.
+          description: >-
+            For pagination purposes, how many results to skip in the results as
+            by default a limit is set.
       responses:
-        200:
+        '200':
           $ref: '#/components/responses/DatasetResponse'
         40x / 500:
           $ref: '#/components/responses/Error'
-
 components:
   schemas:
     DatasetDetail:
@@ -140,11 +140,11 @@ components:
           type: string
         url:
           type: string
-
   responses:
     DatasetResponse:
-      description: |
-        The response is an [Action](http://schema.org/Action) that results in a list of [Dataset](http://schema.org/Dataset)
+      description: >
+        The response is an [Action](http://schema.org/Action) that results in a
+        list of [Dataset](http://schema.org/Dataset)
       content:
         'application/ld+json:':
           schema:
@@ -155,10 +155,11 @@ components:
                 items:
                   $ref: '#/components/schemas/DatasetDetail'
     Error:
-      description: |
-        The response is an [Action](http://schema.org/Action) that results in an [error](https://schema.org/error)
+      description: >
+        The response is an [Action](http://schema.org/Action) that results in an
+        [error](https://schema.org/error)
       content:
-        'application/ld+json':
+        application/ld+json:
           schema:
             type: object
             properties:
