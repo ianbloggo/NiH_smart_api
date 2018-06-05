@@ -1,0 +1,139 @@
+openapi: "3.0.1"
+info:
+  version: '0.1'
+  title: Metadata Domain
+  termsOfService: # TODO We need to check where we get these from
+  contact:
+
+  description: |
+    This is the definition of our metadata domain API</br>
+    This API uses an RPC approach, focusing on operation instead of resources. If you come from REST you will find useful the following table to compare equivalent operations:</br>
+
+    <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Operation</th>
+            <th>RPC (operation)</th>
+            <th>REST (resource)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Signup</td>
+            <td>POST /signup</td>
+            <td>POST /persons</td>
+          </tr>
+          <tr>
+            <td>Resign</td>
+            <td>POST /resign</td>
+            <td>DELETE /persons/1234</td>
+          </tr>
+          <tr>
+            <td>Read a person</td>
+            <td>GET /readPerson?personid=1234</td>
+            <td>GET /persons/1234</td>
+          </tr>
+          <tr>
+            <td>Read a person’s items list</td>
+            <td>GET /readUsersItemsList?userid=1234</td>
+            <td>GET /persons/1234/items</td>
+          </tr>
+          <tr>
+            <td>Add an item to a person’s list</td>
+            <td>POST /addItemToUsersItemsList</td>
+            <td>POST /persons/1234/items</td>
+          </tr>
+          <tr>
+            <td>Update an item</td>
+            <td>POST /modifyItem</td>
+            <td>PUT /items/456</td>
+          </tr>
+          <tr>
+            <td>Delete an item</td>
+            <td>POST /removeItem?itemId=456</td>
+            <td>DELETE /items/456</td>
+          </tr>
+        </tbody>
+      </table>
+
+
+    The API functions return the data as UTF-8 encoded JSON-LD, served using the application/json MIME type. The data consists of a single JSON object which includes JSON-LD context information (in the @context field) and one or more fields which contain the actual data.
+
+    We also use a domain design and the paths will follows the convention `/{domain}/{action}` in the case of this domain the convention dictates `/metadata/{action}`. For example:
+    `/metadata/search`
+paths:
+
+  /metadata/search:
+    get:
+      description: Executes a search on the metadata
+      operationId: searchMetadata
+      parameters:
+        - name: query
+          in: query
+          schema:
+            type: string
+          required: true
+          description: A string that contains the intent of the user doing the search
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          required: false
+          description: The ammount of results being returned per request
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          required: false
+          description: For pagination purposes, how many results to skip in the results as by default a limit is set.
+      responses:
+        200:
+          $ref: '#/components/responses/DatasetResponse'
+        40x / 500:
+          $ref: '#/components/responses/Error'
+
+definitions:
+
+  DatasetDetail:
+    description: |
+      [Dataset on Schema.org](http://schema.org/Dataset)
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      url:
+        type: string
+
+components:
+  responses:
+    DatasetResponse:
+      description: |
+        The response is an [Action](http://schema.org/Action) that results in a list of [Dataset](http://schema.org/Dataset)
+      content:
+        'application/ld+json:':
+          schema:
+            type: object
+            properties:
+              result:
+                type: array
+                items:
+                  $ref: '#/definitions/DatasetDetail'
+    Error:
+      description: |
+        The response is an [Action](http://schema.org/Action) that results in an [error](https://schema.org/error)
+      content:
+        'application/ld+json':
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    description: Machine readable error code
+                  message:
+                    type: string
+                    description: Human readable description of the error cause
