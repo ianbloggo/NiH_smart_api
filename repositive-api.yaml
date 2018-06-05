@@ -7,7 +7,7 @@ info:
     name: Repositive Ltd.
     url: 'https://repositive.io'
     email: info@repositive.io
-    x-role: responsible organisation
+    x-role: responsible organization
     x-id: 'https://github.com/repositive/'
   license:
     name: Apache 2.0
