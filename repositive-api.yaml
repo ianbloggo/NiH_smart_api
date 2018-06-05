@@ -16,57 +16,6 @@ info:
     This is the definition of our metadata domain API</br>
 
     This API uses an RPC approach, focusing on operation instead of resources.
-    If you come from REST you will find useful the following table to compare
-    equivalent operations:</br>
-
-
-    <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Operation</th>
-            <th>RPC (operation)</th>
-            <th>REST (resource)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Signup</td>
-            <td>POST /signup</td>
-            <td>POST /persons</td>
-          </tr>
-          <tr>
-            <td>Resign</td>
-            <td>POST /resign</td>
-            <td>DELETE /persons/1234</td>
-          </tr>
-          <tr>
-            <td>Read a person</td>
-            <td>GET /readPerson?personid=1234</td>
-            <td>GET /persons/1234</td>
-          </tr>
-          <tr>
-            <td>Read a person’s items list</td>
-            <td>GET /readUsersItemsList?userid=1234</td>
-            <td>GET /persons/1234/items</td>
-          </tr>
-          <tr>
-            <td>Add an item to a person’s list</td>
-            <td>POST /addItemToUsersItemsList</td>
-            <td>POST /persons/1234/items</td>
-          </tr>
-          <tr>
-            <td>Update an item</td>
-            <td>POST /modifyItem</td>
-            <td>PUT /items/456</td>
-          </tr>
-          <tr>
-            <td>Delete an item</td>
-            <td>POST /removeItem?itemId=456</td>
-            <td>DELETE /items/456</td>
-          </tr>
-        </tbody>
-      </table>
-
 
     The API functions return the data as UTF-8 encoded JSON-LD, served using the
     application/json MIME type. The data consists of a single JSON object which
@@ -80,12 +29,12 @@ info:
 
     `/metadata/search`
 servers:
-  - url: 'https://api.data-commons-staging.repositive.io'
-    description: Staging search API for the NIH Data Commons pilot project
-    x-maturity: staging
   - url: 'https://api.data-commons.repositive.io'
     description: Search API for the NIH Data Commons pilot project
     x-maturity: production
+  - url: 'https://api.data-commons-staging.repositive.io'
+    description: Staging search API for the NIH Data Commons pilot project
+    x-maturity: staging
   - url: 'http://localhost:3000'
     description: Local development environment for the NIH Data Commons pilot project
     x-maturity: development
