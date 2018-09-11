@@ -1,49 +1,62 @@
-openapi: 3.0.1
+openapi: "3.0.1"
 info:
-  version: '0.1'
+  version: '0.1.0'
   title: Metadata Domain
-  termsOfService: 'https://repositive.io/about'
+  description: >
+    This is the definition of our metadata domain API.
+    The API functions return the data as UTF-8 encoded JSON-LD, served using the
+    application/json MIME type. 
+    The data consists of a single JSON object which includes JSON-LD context
+    information (in the @context field) and one or more fields which contain the
+    actual data.
+    We also use a domain design and the paths will follow the convention
+    `/{domain}/{action}` in the case of this domain the convention dictates
+    `/metadata/{action}`. For example `/metadata/search`.
   contact:
+    email: info@repositive.io
     name: Repositive Ltd.
     url: 'https://repositive.io'
-    email: info@repositive.io
-    x-role: 'responsible organization'
     x-id: 'https://github.com/repositive/'
+    x-role: responsible organization
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-  description: >
-    This is the definition of our metadata domain API</br>
-
-    This API uses an RPC approach, focusing on operation instead of resources.
-
-    The API functions return the data as UTF-8 encoded JSON-LD, served using the
-    application/json MIME type. The data consists of a single JSON object which
-    includes JSON-LD context information (in the @context field) and one or more
-    fields which contain the actual data.
-
-
-    We also use a domain design and the paths will follows the convention
-    `/{domain}/{action}` in the case of this domain the convention dictates
-    `/metadata/{action}`. For example:
-
-    `/metadata/search`
+  termsOfService: 'https://repositive.io/about'
+tags:
+  - name: NIHdatacommons
+  - name: Repositive
 servers:
-  - url: 'https://api.data-commons.repositive.io'
-    description: Search API for the NIH Data Commons pilot project
+  - description: Search API for the NIH Data Commons pilot project
+    url: 'https://api.data-commons.repositive.io'
     x-maturity: production
-  - url: 'https://api.data-commons-staging.repositive.io'
-    description: Staging search API for the NIH Data Commons pilot project
+  - description: Staging search API for the NIH Data Commons pilot project
+    url: 'https://api.data-commons-staging.repositive.io'
     x-maturity: staging
-  - url: 'http://localhost:3000'
-    description: Local development environment for the NIH Data Commons pilot project
+  - description: Local development environment for the NIH Data Commons pilot project
+    url: 'http://localhost:3000'
     x-maturity: development
 paths:
+  /metadata/:
+    get:
+      description: Returns the api.yaml file
+      summary: Returns the api.yaml file
+      operationId: viewAPIdefinition
+      responses:
+        200:
+          description: >
+            Operation successful, returns a yaml file.
+          content:
+            application/yaml:
+              schema:
+                type: string
+        500:
+          $ref: '#/components/responses/Error'
+
   /metadata/search:
     get:
       description: Executes a search on the metadata
       summary: Executes a search on the metadata
-      operationId: search
+      operationId: searchMetadata
       parameters:
         - name: query
           in: query
@@ -52,7 +65,7 @@ paths:
           required: true
           description: >
             A string that contains the intent of the user doing the search. The
-            string follows a custom search DSL and has the following features:
+            string follows a custom search DSL and has the following features
               - Full text search
                 e.g. (`white daisy in england`)
               - Exact match between quoted strings on non predicated tokens.
@@ -62,19 +75,21 @@ paths:
           schema:
             type: integer
           required: false
-          description: The ammount of results being returned per request
+          description: The number of results being returned per request
         - name: offset
           in: query
           schema:
             type: integer
           required: false
-          description: >-
+          description: >
             For pagination purposes, how many results to skip in the results as
             by default a limit is set.
       responses:
-        '200':
+        200:
           $ref: '#/components/responses/DatasetResponse'
-        40x / 500:
+        4XX:
+          $ref: '#/components/responses/Error'
+        5XX:
           $ref: '#/components/responses/Error'
 components:
   schemas:
@@ -89,13 +104,55 @@ components:
           type: string
         url:
           type: string
+        guidMetadata:
+          $ref: '#/components/schemas/GuidMetadata'
+    GuidMetadata:
+      description: Metadata relating to a GUID
+      type: object
+      properties:
+        '@context': 
+          type: string
+        '@id': 
+          description: The GUID
+          type: string
+        '@type':
+          type: string
+        identifier: 
+          type: array
+          items:
+            anyOf:
+              - type: string
+              - type: object
+        name: 
+          type: string
+        url: 
+          type: string
+        author: 
+          type: array
+          items:
+            type: object
+        dateCreated: 
+          type: string
+          format: date
+        datePublished:
+          type: string
+          format: date
+      required:
+        - '@context'
+        - '@id'
+        - '@type'
+        - identifier
+        - name
+        - author
+        - dateCreated
+        - datePublished
   responses:
     DatasetResponse:
       description: >
         The response is an [Action](http://schema.org/Action) that results in a
         list of [Dataset](http://schema.org/Dataset)
       content:
-        'application/ld+json:':
+        application/ld+json:
           schema:
             type: object
             properties:
